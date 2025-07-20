@@ -1,0 +1,196 @@
+import cv2
+import numpy as np
+
+# --- ETAPA 1: DETECÇÃO PRINCIPAL ---
+
+imagem = cv2.imread('moedas5.jpeg')
+if imagem is None:
+    print("Erro: Imagem 'moedas1.jpeg' não encontrada.")
+    exit()
+
+imagem_redim = cv2.resize(imagem, (600, 600))
+imagem_hsv = cv2.cvtColor(imagem_redim, cv2.COLOR_BGR2HSV)
+imagem_resultado = imagem_redim.copy()
+
+cinza = cv2.cvtColor(imagem_redim, cv2.COLOR_BGR2GRAY)
+blur = cv2.GaussianBlur(cinza, (9, 9), 2)
+
+circulos = cv2.HoughCircles(
+    blur, cv2.HOUGH_GRADIENT, dp=1.2, minDist=60,
+    param1=100, param2=38, minRadius=50, maxRadius=85
+)
+
+valores_totais = 0.0
+moedas_detectadas_hough = []
+
+if circulos is not None:
+    circulos = np.uint16(np.around(circulos[0, :]))
+
+    for (x, y, r) in circulos:
+        valor = 0.0
+        roi_hsv = imagem_hsv[y - r:y + r, x - r:x + r]
+        if roi_hsv.size == 0:
+            continue
+
+        media_hsv = np.mean(roi_hsv, axis=(0, 1))
+        matiz = int(media_hsv[0])
+        saturacao = int(media_hsv[1])
+
+        # Classificação baseada em raio, saturação e matiz
+        if saturacao < 45:
+            if 76 <= r <= 83:
+                valor = 1.00
+            elif 63 <= r <= 70:
+                valor = 0.50
+        else:
+            if 70 <= r <= 78:
+                valor = 0.25
+
+        #  10 centavos
+        if 54 <= r <= 61 and 18 <= matiz <= 27 and 30 <= saturacao <= 60:
+            valor = 0.10
+
+        if valor > 0.0:
+            valores_totais += valor
+            moedas_detectadas_hough.append((x, y, r))
+            cv2.circle(imagem_resultado, (x, y), r, (0, 255, 0), 2)
+            texto = f"R${valor:.2f}".replace('.', ',')
+            cv2.putText(imagem_resultado, texto, (x - 30, y),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
+
+print("Etapa 1 (HoughCircles) concluída.")
+
+# --- ETAPA 2: TEMPLATE MATCHING (Opcional) ---
+
+template = cv2.imread('template_10_centavos_faltante.png', 0)
+if template is None:
+    print("Aviso: 'template_10_centavos_faltante.png' não encontrado. Pulando etapa híbrida.")
+else:
+    w, h = template.shape[::-1]
+    res = cv2.matchTemplate(cinza, template, cv2.TM_CCOEFF_NORMED)
+    threshold = 0.8
+    loc = np.where(res >= threshold)
+
+    for pt in zip(*loc[::-1]):
+        x_template, y_template = pt[0] + w // 2, pt[1] + h // 2
+
+        ja_detectada = any(
+            np.linalg.norm(np.array((x_template, y_template)) - np.array((xh, yh))) < rh
+            for (xh, yh, rh) in moedas_detectadas_hough
+        )
+
+        if not ja_detectada:
+            print("Moeda de 10 centavos faltante encontrada via Template Matching!")
+            valor = 0.10
+            valores_totais += valor
+
+            r_template = w // 2
+            cv2.circle(imagem_resultado, (x_template, y_template), r_template, (0, 255, 255), 2)
+            texto = f"R${valor:.2f}".replace('.', ',')
+            cv2.putText(imagem_resultado, texto, (x_template - 30, y_template),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
+            break
+
+print(f"\nValor total final estimado: R${valores_totais:.2f}")
+
+cv2.imshow('Moedas detectadas', imagem_resultado)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+import cv2
+import numpy as np
+
+# --- ETAPA 1: DETECÇÃO PRINCIPAL ---
+
+imagem = cv2.imread('moedas5.jpeg')
+if imagem is None:
+    print("Erro: Imagem 'moedas1.jpeg' não encontrada.")
+    exit()
+
+imagem_redim = cv2.resize(imagem, (600, 600))
+imagem_hsv = cv2.cvtColor(imagem_redim, cv2.COLOR_BGR2HSV)
+imagem_resultado = imagem_redim.copy()
+
+cinza = cv2.cvtColor(imagem_redim, cv2.COLOR_BGR2GRAY)
+blur = cv2.GaussianBlur(cinza, (9, 9), 2)
+
+circulos = cv2.HoughCircles(
+    blur, cv2.HOUGH_GRADIENT, dp=1.2, minDist=60,
+    param1=100, param2=38, minRadius=50, maxRadius=85
+)
+
+valores_totais = 0.0
+moedas_detectadas_hough = []
+
+if circulos is not None:
+    circulos = np.uint16(np.around(circulos[0, :]))
+
+    for (x, y, r) in circulos:
+        valor = 0.0
+        roi_hsv = imagem_hsv[y - r:y + r, x - r:x + r]
+        if roi_hsv.size == 0:
+            continue
+
+        media_hsv = np.mean(roi_hsv, axis=(0, 1))
+        matiz = int(media_hsv[0])
+        saturacao = int(media_hsv[1])
+
+        # Classificação baseada em raio, saturação e matiz
+        if saturacao < 45:
+            if 76 <= r <= 83:
+                valor = 1.00
+            elif 63 <= r <= 70:
+                valor = 0.50
+        else:
+            if 70 <= r <= 78:
+                valor = 0.25
+
+        # NOVA REGRA aprimorada para 10 centavos
+        if 54 <= r <= 61 and 18 <= matiz <= 27 and 30 <= saturacao <= 60:
+            valor = 0.10
+
+        if valor > 0.0:
+            valores_totais += valor
+            moedas_detectadas_hough.append((x, y, r))
+            cv2.circle(imagem_resultado, (x, y), r, (0, 255, 0), 2)
+            texto = f"R${valor:.2f}".replace('.', ',')
+            cv2.putText(imagem_resultado, texto, (x - 30, y),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
+
+print("Etapa 1 (HoughCircles) concluída.")
+
+# --- ETAPA 2: TEMPLATE MATCHING (Opcional) ---
+
+template = cv2.imread('template_10_centavos_faltante.png', 0)
+if template is None:
+    print("Aviso: 'template_10_centavos_faltante.png' não encontrado. Pulando etapa híbrida.")
+else:
+    w, h = template.shape[::-1]
+    res = cv2.matchTemplate(cinza, template, cv2.TM_CCOEFF_NORMED)
+    threshold = 0.8
+    loc = np.where(res >= threshold)
+
+    for pt in zip(*loc[::-1]):
+        x_template, y_template = pt[0] + w // 2, pt[1] + h // 2
+
+        ja_detectada = any(
+            np.linalg.norm(np.array((x_template, y_template)) - np.array((xh, yh))) < rh
+            for (xh, yh, rh) in moedas_detectadas_hough
+        )
+
+        if not ja_detectada:
+            print("Moeda de 10 centavos faltante encontrada via Template Matching!")
+            valor = 0.10
+            valores_totais += valor
+
+            r_template = w // 2
+            cv2.circle(imagem_resultado, (x_template, y_template), r_template, (0, 255, 255), 2)
+            texto = f"R${valor:.2f}".replace('.', ',')
+            cv2.putText(imagem_resultado, texto, (x_template - 30, y_template),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
+            break
+
+print(f"\nValor total final estimado: R${valores_totais:.2f}")
+
+cv2.imshow('Moedas detectadas', imagem_resultado)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
