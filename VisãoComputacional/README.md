@@ -55,10 +55,3 @@ pip install opencv-python numpy matplotlib`
     ```
 4.  Uma janela do Matplotlib será aberta, exibindo quatro painéis: a imagem original, o resultado do detector de Canny, o resultado do filtro de Sobel e o resultado do filtro de Prewitt.
 
-## Estrutura dos Arquivos
-`
-Estrutura dos Arquivos
-/seu-projeto
-|
-|-- detectoresborda.py      # O script principal
-|-- th.jpeg                 # Imagem de exemplo para análise`
