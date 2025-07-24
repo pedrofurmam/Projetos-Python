@@ -55,7 +55,7 @@ pip install opencv-python numpy matplotlib`
     ```
 4.  Uma janela do Matplotlib será aberta, exibindo quatro painéis: a imagem original, o resultado do detector de Canny, o resultado do filtro de Sobel e o resultado do filtro de Prewitt.
    
---
+
 
 # Detector de Veículos com Haar Cascade em OpenCV
 
@@ -121,6 +121,3 @@ Para executar este projeto, você precisa:
     * Uma janela do OpenCV aparecerá mostrando a imagem com os veículos demarcados.
     * A imagem com o resultado será salva no caminho de saída especificado.
 
-## Estrutura dos Arquivos
-
-Para que o script funcione, você precisará organizar seus arquivos de forma que os caminhos no código possam encontrá-los. Exemplo:
