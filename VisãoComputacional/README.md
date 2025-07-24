@@ -45,15 +45,17 @@ Você pode instalar todas elas com um único comando via `pip`:
 `
 pip install opencv-python numpy matplotlib`
 
-##Como Usar
-Salve o código como detectoresborda.py.
+## Como Usar
 
-Coloque uma imagem de sua escolha no mesmo diretório e nomeie-a como th.jpeg, ou altere o nome do arquivo diretamente no código.
+1.  Salve o código como `detectoresborda.py`.
+2.  Coloque uma imagem de sua escolha no mesmo diretório e nomeie-a como `th.jpeg`, ou altere o nome do arquivo diretamente no código.
+3.  Execute o script a partir do seu terminal:
+    ```bash
+    python detectoresborda.py
+    ```
+4.  Uma janela do Matplotlib será aberta, exibindo quatro painéis: a imagem original, o resultado do detector de Canny, o resultado do filtro de Sobel e o resultado do filtro de Prewitt.
 
-Execute o script a partir do seu terminal:
-
-`python detectoresborda.py`
-Uma janela do Matplotlib será aberta, exibindo quatro painéis: a imagem original, o resultado do detector de Canny, o resultado do filtro de Sobel e o resultado do filtro de Prewitt.
+## Estrutura dos Arquivos
 `
 Estrutura dos Arquivos
 /seu-projeto
