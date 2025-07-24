@@ -70,10 +70,10 @@ O script principal é dividido em quatro partes:
 ## Como Executar
 
 1.  Certifique-se de ter o Python instalado.
-2.  Salve o código em um arquivo (por exemplo, `automato_colheitadeira.py`).
+2.  Salve o código em um arquivo (por exemplo, `maquinaautonoma.py`).
 3.  Execute o arquivo pelo terminal:
     ```bash
-    python automato_colheitadeira.py
+    python maquinaautonoma.py
     ```
 4.  O programa solicitará que você digite a fita. Insira os símbolos separados por espaços e pressione Enter.
 
