@@ -120,4 +120,67 @@ Para executar este projeto, você precisa:
     * O script imprimirá o número de veículos detectados no console.
     * Uma janela do OpenCV aparecerá mostrando a imagem com os veículos demarcados.
     * A imagem com o resultado será salva no caminho de saída especificado.
+      
+# Análise de Histogramas de Imagens com OpenCV e Matplotlib
+
+Este projeto em Python demonstra o cálculo e a visualização de histogramas para imagens em escala de cinza. O script aplica duas transformações comuns — **Equalização de Histograma** e **Negativo de Imagem** — e exibe os resultados visuais e seus respectivos histogramas lado a lado para uma análise comparativa clara.
+
+## O que é um Histograma de Imagem?
+
+Um histograma é um gráfico que representa a distribuição da frequência das intensidades de pixels em uma imagem. Para uma imagem em escala de cinza de 8 bits, o eixo X do histograma vai de 0 (preto puro) a 255 (branco puro), enquanto o eixo Y mostra quantos pixels na imagem possuem cada um desses valores de intensidade.
+
+A análise de histogramas é fundamental para entender as características de uma imagem, como brilho, contraste e a distribuição tonal geral.
+
+## Conceitos e Transformações Aplicadas
+
+O script explora os seguintes conceitos:
+
+1.  **Histograma Original**: Mostra a distribuição de pixels da imagem como ela é. Uma imagem escura terá um histograma concentrado à esquerda, uma imagem clara terá um histograma concentrado à direita, e uma imagem de baixo contraste terá um histograma concentrado em uma faixa estreita.
+
+2.  **Equalização de Histograma (`cv2.equalizeHist`)**:
+    * **Objetivo**: Melhorar o contraste de uma imagem.
+    * **Como funciona**: É uma técnica que redistribui as intensidades dos pixels para que a distribuição seja o mais uniforme e espalhada possível. Na prática, isso "alarga" as faixas de intensidade mais comuns, resultando em um maior contraste global e na revelação de detalhes que antes estavam obscurecidos. O histograma resultante tende a ser mais plano e a ocupar toda a faixa de 0 a 255.
+
+3.  **Negativo de Imagem (`cv2.bitwise_not`)**:
+    * **Objetivo**: Inverter as intensidades da imagem.
+    * **Como funciona**: Cada valor de pixel `p` é transformado em `255 - p`. Isso transforma pixels pretos em brancos, brancos em pretos e inverte todos os tons de cinza. O histograma da imagem negativa é um "espelho" horizontal do histograma original.
+
+## Estrutura do Código
+
+-   **`plot_histogram()`**: Uma função auxiliar que recebe uma imagem e um eixo de plotagem do Matplotlib para calcular e desenhar o histograma correspondente.
+-   **Carregamento**: A imagem de entrada é carregada diretamente em escala de cinza.
+-   **Processamento**: As operações de equalização e negativo são aplicadas à imagem original.
+-   **Visualização**: O script cria uma grade de plotagem de 3x2 com o Matplotlib. Em cada linha, a imagem processada é mostrada na coluna da esquerda e seu histograma correspondente é mostrado na coluna da direita.
+
+## Dependências
+
+Para executar este script, você precisará das seguintes bibliotecas Python:
+
+-   `opencv-python`
+-   `numpy`
+-   `matplotlib`
+
+Você pode instalar todas com um único comando via `pip`:
+`
+pip install opencv-python numpy matplotlib`
+
+## Como Usar
+
+1.  **Preparar o Ambiente**:
+    * Salve o código como `histogramas.py`.
+    * Coloque uma imagem para análise no mesmo diretório do script e nomeie-a como `imagem4.jpg` (ou altere o nome do arquivo diretamente no código).
+
+2.  **Executar o Script**:
+    * Abra um terminal e execute o código:
+        ```bash
+        python histogramas.py
+        ```
+
+3.  **Analisar o Resultado**:
+    * Uma janela do Matplotlib será aberta, exibindo uma figura com 6 gráficos:
+        * **Linha 1**: Imagem Original e seu Histograma.
+        * **Linha 2**: Imagem Equalizada e seu Histograma.
+        * **Linha 3**: Imagem Negativa e seu Histograma.
+    * Isso permite uma comparação direta do efeito de cada transformação na imagem e em sua distribuição de pixels.
+
 
